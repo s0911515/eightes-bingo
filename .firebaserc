@@ -1,5 +1,15 @@
 {
   "projects": {
     "default": "eightes-town"
-  }
+  },
+  "targets": {
+    "eightes-town": {
+      "hosting": {
+        "bingo-site": [
+          "eightes-bingo"
+        ]
+      }
+    }
+  },
+  "etags": {}
 }

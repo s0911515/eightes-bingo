@@ -1,5 +1,6 @@
 {
   "hosting": {
+    "target": "bingo-site",
     "public": "out",
     "ignore": [
       "firebase.json",
