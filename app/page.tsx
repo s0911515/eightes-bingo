@@ -114,7 +114,7 @@ export default function LoginPage() {
       <div className="absolute bottom-[-10%] right-[-10%] w-80 h-80 bg-yellow-400/20 rounded-full blur-3xl animate-pulse delay-700" />
       
       <div className="relative w-full max-w-md bg-white/95 backdrop-blur-sm p-8 rounded-3xl shadow-[0_20px_50px_rgba(0,0,0,0.3)] border border-white/20">
-        <header className="text-center mb-8">
+        <header className="relative text-center mb-8">
           <div className="inline-block bg-yellow-400 text-yellow-900 text-xs font-bold px-3 py-1 rounded-full mb-2 uppercase tracking-widest shadow-sm">
             2026 Special Event
           </div>
@@ -122,6 +122,11 @@ export default function LoginPage() {
             エイテスタウン自治会<br></br><span className="sm:block">夏祭りビンゴ大会</span>
           </h1>
           <p className="text-gray-500 mt-3 text-sm font-medium">お気軽にご参加ください！</p>
+          <img
+            src="/img/inzai-kun_festival.gif"
+            alt="いんざいくん"
+            className="absolute -top-10 -right-10 w-20 h-20 object-contain"
+          />
         </header>
 
         <form onSubmit={handleLogin} className="space-y-6">
