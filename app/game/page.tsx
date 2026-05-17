@@ -6,7 +6,7 @@ import { onAuthStateChanged } from "firebase/auth";
 import { 
   collection, query, orderBy, limit, onSnapshot, 
   addDoc, serverTimestamp, updateDoc, doc, deleteDoc, 
-  increment, getDoc, Timestamp 
+  getDoc, Timestamp 
 } from "firebase/firestore";
 import { useRouter } from "next/navigation";
 
@@ -57,6 +57,7 @@ export default function GamePage() {
   const [lastDrawnNumber, setLastDrawnNumber] = useState<number | null>(null);
   const [showStartOverlay, setShowStartOverlay] = useState(true);
   const [showGameStartOverlay, setShowGameStartOverlay] = useState(false);
+  const [showRules, setShowRules] = useState(false);
   const [isEnded, setIsEnded] = useState(false);
   const [isLoading, setIsLoading] = useState(true); // ローディング状態を追加
 
@@ -154,6 +155,32 @@ export default function GamePage() {
 
   const currentIsBingo = lines.some(line => line.every(index => isHit(index)));
 
+  const latestAnnouncement = messages.length > 0 ? messages[messages.length - 1] : null;
+  const [announcePulse, setAnnouncePulse] = useState(false);
+  const latestAnnouncementIdRef = useRef<string | null>(null);
+
+  const formatChatTime = (value?: TimestampValue) => {
+    if (!value) return "";
+    if (value instanceof Timestamp) return value.toDate().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+    if (value instanceof Date) return value.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+    return "";
+  };
+
+  useEffect(() => {
+    const latestId = latestAnnouncement?.id ?? null;
+    if (latestAnnouncementIdRef.current && latestId && latestId !== latestAnnouncementIdRef.current) {
+      setAnnouncePulse(true);
+      const timer = setTimeout(() => setAnnouncePulse(false), 900);
+      return () => clearTimeout(timer);
+    }
+    latestAnnouncementIdRef.current = latestId;
+  }, [latestAnnouncement?.id]);
+
+  const truncateText = (text: string, maxLength = 50) => {
+    if (!text) return "";
+    return text.length > maxLength ? `${text.slice(0, maxLength).trimEnd()}...` : text;
+  };
+
   // --- ビンゴ達成時のデータ更新ロジック ---
   useEffect(() => {
     const updateBingoStatus = async () => {
@@ -176,9 +203,10 @@ export default function GamePage() {
           const newList = list.map((p: Participant) => 
             p.uid === user.uid ? { ...p, isBingo: true, updatedAt: new Date() } : p
           );
+          const stats = calculateGameStats(newList);
           await updateDoc(gameRef, {
             participantList: newList,
-            bingoCount: increment(1)
+            bingoCount: stats.bingoCount
           });
         }
       }
@@ -363,12 +391,21 @@ export default function GamePage() {
             エイテスタウン自治会<br></br>夏祭りビンゴ大会
           </h1>
           <div className="mb-4 rounded-3xl border border-blue-200 bg-blue-50/80 p-4 text-left text-sm text-blue-900 shadow-sm">
-            <p className="font-bold text-blue-700 mb-2">ゲームのルール</p>
-            <ul className="space-y-2 text-gray-700">
-              <li>・運営スタッフが番号を引くとパネルが自動で開きます。</li>
-              <li>・BINGOした方は集会所にいる運営スタッフへお声がけください。景品には限りがありますのでご了承ください。</li>
-              <li>・運営からのお知らせはチャットをご確認ください。</li>
-            </ul>
+            <button
+              type="button"
+              onClick={() => setShowRules((prev) => !prev)}
+              className="flex w-full items-center justify-between font-bold text-blue-800"
+            >
+              <span>ゲームのルール</span>
+              <span className="text-xl">{showRules ? "−" : "+"}</span>
+            </button>
+            {showRules && (
+              <ul className="mt-4 space-y-2 text-gray-700">
+                <li>・運営スタッフが番号を引くとパネルが自動で開きます。</li>
+                <li>・BINGOした方は集会所にいる運営スタッフへお声がけください。景品には限りがありますのでご了承ください。</li>
+                <li>・運営からのお知らせはチャットをご確認ください。</li>
+              </ul>
+            )}
           </div>
           <div className="flex items-center justify-center gap-6 border-t border-blue-100 pt-4">
             <div className="text-center">
@@ -394,6 +431,29 @@ export default function GamePage() {
             </div>
           )}
         </header>
+
+        <div className="w-full max-w-xl mx-auto mb-6 p-5 rounded-[2rem] bg-white/95 border border-slate-200 shadow-xl shadow-slate-500/10">
+          <div className="flex flex-col gap-4 sm:flex-row sm:items-start sm:justify-between">
+            <div className={`flex-1 rounded-3xl border border-amber-200 bg-amber-100/90 p-4 shadow-sm transition-all duration-700 ${announcePulse ? "animate-[pulse_0.9s_ease-out] ring-2 ring-amber-300/70" : ""}`}>
+              <div className="flex items-center justify-between gap-3">
+                <div>
+                  <p className="text-[10px] font-bold uppercase tracking-[0.3em] text-amber-700">最新お知らせ</p>
+                  <p className="mt-2 text-sm font-bold text-amber-900">{latestAnnouncement?.senderName || "運営"}</p>
+                </div>
+                {latestAnnouncement && (
+                  <span className="text-[11px] text-slate-500">{formatChatTime(latestAnnouncement.createdAt)}</span>
+                )}
+              </div>
+              <div className="mt-3 text-sm leading-relaxed text-slate-700">
+                {latestAnnouncement ? (
+                  <p>{truncateText(latestAnnouncement.text, 50)}</p>
+                ) : (
+                  <p className="text-slate-500">現在お知らせはありません。</p>
+                )}
+              </div>
+            </div>
+          </div>
+        </div>
 
         <div className={`w-full max-w-[400px] aspect-square bg-white/80 backdrop-blur-md p-4 rounded-3xl shadow-2xl border-4 grid grid-cols-5 gap-2 sm:gap-3 mb-6 transition-all duration-500 ${currentIsBingo ? "border-yellow-400 ring-8 ring-yellow-400/10" : "border-white/20"}`}>
           {userData.card.map((num: number, i: number) => {
@@ -470,7 +530,7 @@ export default function GamePage() {
                     {isMe && <span className="text-[9px] text-gray-400 mb-1 whitespace-nowrap">{time}</span>}
                     <div className={`p-3 rounded-2xl text-sm shadow-sm transition-all
                       ${isAdmin 
-                        ? "bg-amber-100 text-amber-900 border-2 border-amber-300 rounded-tl-none font-bold" 
+                        ? "bg-amber-200/95 text-amber-950 border border-amber-300 rounded-tl-none font-bold shadow-amber-200/60" 
                         : isMe 
                           ? "bg-blue-600 text-white rounded-br-none" 
                           : "bg-white text-gray-800 rounded-tl-none border border-gray-100"
