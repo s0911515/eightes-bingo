@@ -6,23 +6,19 @@ on:
 jobs:
   build_and_deploy:
     runs-on: ubuntu-latest
-    env:
-      # Node.js 24 への強制移行フラグを追加して警告を消す
-      FORCE_JAVASCRIPT_ACTIONS_TO_NODE24: true
     steps:
       - uses: actions/checkout@v4
-      
+
       - name: Setup Node.js
         uses: actions/setup-node@v4
         with:
-          node-version: 24 # 最新の安定版を指定
+          node-version: 24
           cache: 'npm'
 
       - name: Install Dependencies
         run: npm ci
 
       - name: Build Next.js
-        # ここで Secrets をビルド環境に流し込む
         run: npm run build
         env:
           NEXT_PUBLIC_FIREBASE_API_KEY: ${{ secrets.NEXT_PUBLIC_FIREBASE_API_KEY }}
@@ -32,9 +28,19 @@ jobs:
           NEXT_PUBLIC_FIREBASE_MESSAGING_SENDER_ID: ${{ secrets.NEXT_PUBLIC_FIREBASE_MESSAGING_SENDER_ID }}
           NEXT_PUBLIC_FIREBASE_APP_ID: ${{ secrets.NEXT_PUBLIC_FIREBASE_APP_ID }}
 
-      - uses: FirebaseExtended/action-hosting-deploy@v0
-        with:
-          repoToken: ${{ secrets.GITHUB_TOKEN }}
-          firebaseServiceAccount: ${{ secrets.FIREBASE_SERVICE_ACCOUNT_EIGHTES_TOWN }}
-          channelId: live
-          projectId: eightes-town
+      - name: Deploy to Firebase Hosting
+        run: |
+          echo "$SA_JSON" > /tmp/firebase-sa.json
+          export GOOGLE_APPLICATION_CREDENTIALS=/tmp/firebase-sa.json
+          set +e
+          output=$(npx firebase-tools deploy --only hosting --project eightes-town 2>&1)
+          exit_code=$?
+          rm -f /tmp/firebase-sa.json
+          echo "$output"
+          if [ $exit_code -ne 0 ] && echo "$output" | grep -q "is the current active version"; then
+            echo "✓ デプロイ不要：ビルド内容は既にライブと同一です"
+            exit 0
+          fi
+          exit $exit_code
+        env:
+          SA_JSON: ${{ secrets.FIREBASE_SERVICE_ACCOUNT_EIGHTES_TOWN }}
