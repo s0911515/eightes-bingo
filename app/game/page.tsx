@@ -401,8 +401,9 @@ export default function GamePage() {
             </button>
             {showRules && (
               <ul className="mt-4 space-y-2 text-gray-700">
-                <li>・運営スタッフが番号を引くとパネルが自動で開きます。</li>
-                <li>・BINGOした方は集会所にいる運営スタッフへお声がけください。景品には限りがありますのでご了承ください。</li>
+                <li>・運営スタッフが番号を引くとパネルが自動で開きます。数分ごとにゆっくり進めていくので、のんびり気楽にお楽しみください 😊</li>
+                <li>・BINGOしたら集会所のスタッフへこのスマホ画面を見せてください。</li>
+                <li>・景品は<span className="font-bold text-red-600">BINGO順ではなく、集会所へ受け取りに来た順</span>でお渡しします。先着20名様限定です。</li>
                 <li>・運営からのお知らせはチャットをご確認ください。</li>
               </ul>
             )}
@@ -454,6 +455,16 @@ export default function GamePage() {
             </div>
           </div>
         </div>
+
+        {stats.received >= 20 && (
+          <div className="w-full max-w-xl mb-4 rounded-2xl bg-orange-50 border-2 border-orange-300 px-5 py-4 text-center shadow-md">
+            <p className="text-orange-700 font-black text-sm mb-1">🎁 景品の先着20名は終了しました！</p>
+            <p className="text-orange-600 text-xs leading-relaxed">
+              でも参加賞のお菓子をご用意しています🍬<br />
+              BINGOしたらぜひ集会所のスタッフへスマホ画面を見せに来てください！
+            </p>
+          </div>
+        )}
 
         <div className={`w-full max-w-[400px] aspect-square bg-white/80 backdrop-blur-md p-4 rounded-3xl shadow-2xl border-4 grid grid-cols-5 gap-2 sm:gap-3 mb-6 transition-all duration-500 ${currentIsBingo ? "border-yellow-400 ring-8 ring-yellow-400/10" : "border-white/20"}`}>
           {userData.card.map((num: number, i: number) => {

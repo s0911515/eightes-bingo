@@ -2,19 +2,20 @@
 
 import { useEffect, useState, useRef } from "react";
 import { db } from "@/lib/firebase";
-import { 
-  doc, 
-  onSnapshot, 
-  updateDoc, 
+import {
+  doc,
+  onSnapshot,
+  updateDoc,
   writeBatch,
   getDocs,
-  arrayUnion, 
-  collection, 
-  query, 
-  orderBy, 
-  limit, 
-  addDoc, 
-  serverTimestamp 
+  arrayUnion,
+  collection,
+  query,
+  orderBy,
+  limit,
+  addDoc,
+  serverTimestamp,
+  Timestamp,
 } from "firebase/firestore";
 
 export default function AdminPage() {
@@ -27,7 +28,9 @@ export default function AdminPage() {
   const scrollEndRef = useRef<HTMLDivElement>(null);
   const [totalParticipants, setTotalParticipants] = useState(0);
   const [claimedCount, setClaimedCount] = useState(0);
-  
+  const [lastDrawnAt, setLastDrawnAt] = useState<Date | null>(null);
+  const [elapsed, setElapsed] = useState("");
+
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
 
   useEffect(() => {
@@ -42,6 +45,8 @@ export default function AdminPage() {
         // 統計情報の更新
         setTotalParticipants(data.totalParticipants || 0);
         setClaimedCount(data.receivedCount || 0);
+        const lda = data.lastDrawnAt;
+        setLastDrawnAt(lda instanceof Timestamp ? lda.toDate() : null);
 
         // ビンゴ当選者リストを配列から抽出してソート
         const list = data.participantList || [];
@@ -67,6 +72,18 @@ export default function AdminPage() {
   useEffect(() => {
     scrollEndRef.current?.scrollIntoView({ behavior: "smooth" });
   }, [messages, isSidebarOpen]);
+
+  useEffect(() => {
+    const update = () => {
+      if (!lastDrawnAt) { setElapsed(""); return; }
+      const sec = Math.floor((Date.now() - lastDrawnAt.getTime()) / 1000);
+      if (sec < 60) setElapsed(`${sec}秒前`);
+      else setElapsed(`${Math.floor(sec / 60)}分${sec % 60}秒前`);
+    };
+    update();
+    const id = setInterval(update, 1000);
+    return () => clearInterval(id);
+  }, [lastDrawnAt]);
 
   // --- ゲームおよび統計のリセット処理 ---
   const handleGameReset = async () => {
@@ -130,6 +147,7 @@ export default function AdminPage() {
     const nextNumber = availableNumbers[Math.floor(Math.random() * availableNumbers.length)];
     await updateDoc(doc(db, "gameStatus", "current"), {
       drawnNumbers: arrayUnion(nextNumber),
+      lastDrawnAt: serverTimestamp(),
       updatedAt: serverTimestamp(),
     });
   };
@@ -181,14 +199,19 @@ export default function AdminPage() {
           <button onClick={handleGameReset} className="bg-red-600/80 hover:bg-red-600 text-white px-6 py-2 rounded-xl font-bold shadow-lg transition-all border border-red-500/50 backdrop-blur-sm">
             ゲームリセット
           </button>
-          <button 
-            onClick={handleDrawNumber} 
-            disabled={!isStarted || isEnded}
-            className={`px-10 py-2 rounded-xl font-black shadow-lg text-white transition-all text-xl border
-              ${isStarted && !isEnded ? "bg-emerald-600 border-emerald-400 hover:scale-105 animate-pulse" : "bg-gray-700 border-gray-600 cursor-not-allowed"}`}
-          >
-            番号を引く！
-          </button>
+          <div className="flex flex-col items-center gap-1">
+            <button
+              onClick={handleDrawNumber}
+              disabled={!isStarted || isEnded}
+              className={`px-10 py-2 rounded-xl font-black shadow-lg text-white transition-all text-xl border
+                ${isStarted && !isEnded ? "bg-emerald-600 border-emerald-400 hover:scale-105 animate-pulse" : "bg-gray-700 border-gray-600 cursor-not-allowed"}`}
+            >
+              番号を引く！
+            </button>
+            {elapsed && (
+              <span className="text-xs text-gray-400">前回: {elapsed}</span>
+            )}
+          </div>
           <button
             onClick={handleGameEnd}
             disabled={!isStarted || isEnded}

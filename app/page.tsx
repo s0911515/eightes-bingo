@@ -321,13 +321,14 @@ export default function LoginPage() {
 
     setIsLoading(true);
     try {
+      const userCredential = await signInAnonymously(auth);
+      const user = userCredential.user;
+
       const gameSnap = await getDoc(doc(db, "gameStatus", "current"));
       if (gameSnap.exists() && gameSnap.data().isEnded) {
         alert("ゲームは終了しています。新規参加はできません。");
         return;
       }
-      const userCredential = await signInAnonymously(auth);
-      const user = userCredential.user;
 
       const userRef = doc(db, "participants", user.uid);
       const userSnap = await getDoc(userRef);
