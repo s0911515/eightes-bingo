@@ -1,7 +1,8 @@
 "use client";
 
 import { useEffect, useState, useRef } from "react";
-import { db } from "@/lib/firebase";
+import { auth, db } from "@/lib/firebase";
+import { signInAnonymously } from "firebase/auth";
 import {
   doc,
   onSnapshot,
@@ -34,6 +35,8 @@ export default function AdminPage() {
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
 
   useEffect(() => {
+    signInAnonymously(auth).catch(() => {});
+
     // 1. ゲーム状況・統計・参加者リストの統合監視 (1リード / 更新)
     const unsubscribeGame = onSnapshot(doc(db, "gameStatus", "current"), (docSnap) => {
       if (docSnap.exists()) {
