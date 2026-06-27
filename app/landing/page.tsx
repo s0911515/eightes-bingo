@@ -118,7 +118,7 @@ function FloatingDots() {
   );
 }
 
-const FESTIVAL_DATE = new Date("2026-08-22T00:00:00+09:00");
+const FESTIVAL_DATE = new Date("2026-08-29T00:00:00+09:00");
 
 function BingoLink({ className, children }: { className: string; children: React.ReactNode }) {
   const [showModal, setShowModal] = useState(false);
@@ -149,7 +149,7 @@ function BingoLink({ className, children }: { className: string; children: React
             <div className="text-5xl mb-4">🎱</div>
             <h3 className="text-xl font-black text-white mb-2">もうすぐだよ！</h3>
             <p className="text-white/70 text-sm leading-relaxed mb-1">
-              ビンゴへの参加登録は<strong className="text-yellow-300">当日 8月22日</strong>からスタートします。
+              ビンゴへの参加登録は<strong className="text-yellow-300">当日 8月29日</strong>からスタートします。
             </p>
             <p className="text-white/50 text-xs mb-6">
               16:00の開始に合わせてアクセスしてね 🏮
@@ -189,14 +189,14 @@ const STARS = Array.from({ length: 60 }, (_, i) => {
 });
 
 export default function LandingPage() {
-  const festivalDate = new Date("2026-08-22T16:00:00+09:00");
+  const festivalDate = new Date("2026-08-29T16:00:00+09:00");
 
   return (
     <div className="min-h-screen bg-gradient-to-b from-[#0d0540] via-[#1a0a6e] to-[#0d0540] text-white overflow-x-hidden">
 
       {/* ===== HERO ===== */}
       <section
-        className="relative min-h-screen flex flex-col items-center justify-center px-4 py-20 text-center overflow-hidden"
+        className="relative min-h-screen flex flex-col items-center justify-center px-4 py-20 [@media(max-height:700px)]:py-10 text-center overflow-hidden"
       >
         {/* stars background */}
         <div className="absolute inset-0 overflow-hidden pointer-events-none">
@@ -236,12 +236,12 @@ export default function LandingPage() {
         <FloatingDots />
 
         {/* Badge */}
-        <div className="inline-flex items-center gap-2 bg-yellow-400 text-yellow-900 font-black text-sm px-5 py-2 rounded-full mb-6 shadow-lg shadow-yellow-400/30 animate-pulse">
+        <div className="inline-flex items-center gap-2 bg-yellow-400 text-yellow-900 font-black text-sm px-5 py-2 rounded-full mb-6 [@media(max-height:700px)]:mb-3 shadow-lg shadow-yellow-400/30 animate-pulse">
           <span>🏮</span> 2026年 夏 開催決定！
         </div>
 
         {/* Title */}
-        <h1 className="text-4xl sm:text-6xl lg:text-7xl font-black leading-tight mb-4 drop-shadow-[0_0_30px_rgba(255,200,0,0.5)]">
+        <h1 className="text-4xl sm:text-6xl lg:text-7xl [@media(max-height:700px)]:text-3xl font-black leading-tight mb-4 [@media(max-height:700px)]:mb-2 drop-shadow-[0_0_30px_rgba(255,200,0,0.5)]">
           <span className="text-yellow-300">Eightes Town</span>
           <br />
           <span className="text-white text-3xl sm:text-5xl lg:text-6xl">みんなで作ろう！</span>
@@ -257,18 +257,18 @@ export default function LandingPage() {
           </span>
         </h1>
 
-        <p className="text-2xl sm:text-3xl font-bold text-white/90 mt-2 mb-8 tracking-wider">
-          🗓 2026年8月22日（土）16:00〜
+        <p className="text-2xl sm:text-3xl font-bold text-white/90 mt-2 mb-8 [@media(max-height:700px)]:mt-0 [@media(max-height:700px)]:mb-4 tracking-wider">
+          🗓 2026年8月29日（土）16:00〜
         </p>
 
         {/* Countdown */}
-        <div className="mb-10">
-          <p className="text-white/60 text-sm font-bold mb-3 uppercase tracking-widest">開催まで</p>
+        <div className="mb-10 [@media(max-height:700px)]:mb-5">
+          <p className="text-white/60 text-sm font-bold mb-3 [@media(max-height:700px)]:mb-2 uppercase tracking-widest">開催まで</p>
           <CountdownTimer targetDate={festivalDate} />
         </div>
 
         {/* inzai-kun */}
-        <div className="mb-8">
+        <div className="mb-8 [@media(max-height:700px)]:mb-4">
           <Image
             src="/img/inzai-kun_banzai.gif"
             alt="いんざいくん"
@@ -397,7 +397,7 @@ export default function LandingPage() {
                 <p className="font-black text-white text-lg mb-1">当日、集会所へ来てね 🏠</p>
                 <p className="text-white/70 text-sm leading-relaxed">
                   会場はいつもの<span className="text-white font-bold">集会所</span>です。<strong className="text-yellow-300">16:00〜19:00頃</strong>スタッフが待機しています。
-                  事前申し込みや会費は一切不要。好きなタイミングでふらっと来てください！
+                  事前申し込みや会費は一切不要。好きなタイミングで、手ぶらでふらっと来てください！
                 </p>
               </div>
             </div>
