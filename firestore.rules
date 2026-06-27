@@ -1,10 +1,12 @@
 rules_version = '2';
 service cloud.firestore {
   match /databases/{database}/documents {
-    // 匿名認証済みであれば全コレクションへの読み書きを許可
-    // （管理者ページが参加者全員のドキュメントを操作するため）
+
+    // 全コレクション読み取りは認証不要（管理画面・ゲーム画面の初期表示に対応）
+    // 書き込みのみ認証必須
     match /{document=**} {
-      allow read, write: if request.auth != null;
+      allow read: if true;
+      allow write: if request.auth != null;
     }
   }
 }

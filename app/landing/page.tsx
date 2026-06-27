@@ -313,7 +313,7 @@ export default function LandingPage() {
             <div className="text-4xl mb-3">🪙</div>
             <h3 className="font-black text-white text-base mb-2">予算ゼロ円からの手作り</h3>
             <p className="text-white/60 text-sm leading-relaxed">
-              当自治会は会費を徴収していません。運営資金は自治体からの補助金のみ。だから全部手作り。逆にそれがおもしろいと思っています。
+              当自治会は会費を徴収していません（管理組合費は別会計）。運営資金は自治体からの補助金のみ。だから全部手作り。逆にそれがおもしろいと思っています。
             </p>
           </div>
         </div>
@@ -458,7 +458,7 @@ export default function LandingPage() {
             <div className="bg-black/20 rounded-2xl p-4 border border-orange-500/20">
               <p className="text-orange-200/70 text-s leading-relaxed font-medium">
                 ※ 自宅でのBBQは法律・条例で禁止されているものではありませんが、住宅密集地域での煙・臭い・音によるトラブルが全国的に増えております。住民の皆様一人ひとりの思いやりの心で、楽しい季節を気持ちよく過ごしましょう。<br />
-                ※ 通常日のBBQを規制するものではありません。当日以外でBBQを実施される際は、事前の声掛け・時間帯への配慮・煙や音の対策など、より一層のマナーへのご配慮をお願いいたします。
+                ※ 当日以外のBBQを規制するものではありません。当日以外でBBQを実施される際は、事前の声掛け・時間帯への配慮・煙や音の対策など、より一層のマナーへのご配慮をお願いいたします。
               </p>
             </div>
           </div>
@@ -505,7 +505,7 @@ export default function LandingPage() {
               </li>
               <li className="flex gap-2">
                 <span className="flex-shrink-0 text-yellow-400 font-bold">・</span>
-                会場で出たゴミは、集会所の分別ゴミ箱をご利用いただくか、各自お持ち帰りください。近隣へのポイ捨ては絶対にご遠慮ください。
+                会場で出たゴミは、集会所のゴミ袋をご利用いただくか、各自お持ち帰りください。近隣へのポイ捨ては絶対にご遠慮ください。
               </li>
             </ul>
           </div>
@@ -519,11 +519,7 @@ export default function LandingPage() {
             <ul className="px-6 py-5 space-y-3 text-white/65 text-sm leading-relaxed">
               <li className="flex gap-2">
                 <span className="flex-shrink-0 text-yellow-400 font-bold">・</span>
-                当日は集会所周辺が例年より賑やかになります。地域の子どもたちの笑顔のため、何卒ご理解とご協力をお願い申し上げます。
-              </li>
-              <li className="flex gap-2">
-                <span className="flex-shrink-0 text-yellow-400 font-bold">・</span>
-                駐車スペースに限りがあるため、お車でのご来場はご遠慮ください。
+                当日は集会所周辺が例年より賑やかになります。地域の交流イベントのため、何卒ご理解とご協力をお願い申し上げます。
               </li>
             </ul>
           </div>
@@ -555,7 +551,7 @@ export default function LandingPage() {
               </li>
               <li className="flex gap-2">
                 <span className="flex-shrink-0 text-yellow-400 font-bold">・</span>
-                運営スタッフが記録写真を撮影することがあります。撮影をご希望でない方はスタッフにお申し付けください。
+                運営スタッフが記録写真を撮影し、後日入居者専用サイトに掲載することがあります。撮影をご希望でない方はスタッフにお申し付けください。
               </li>
             </ul>
           </div>
