@@ -23,6 +23,15 @@ const events = [
     badgeColor: "bg-blue-100 text-blue-700",
   },
   {
+    icon: "⭕",
+    title: "輪投げ",
+    subtitle: "輪っかも自分で作ろう！",
+    description: "新聞紙を丸めて輪っかをDIY。自分で作った輪を使って輪投げに挑戦！うまく入れられるかな？",
+    color: "from-green-500 to-teal-500",
+    badge: "手作り体験",
+    badgeColor: "bg-green-100 text-green-700",
+  },
+  {
     icon: "🔥",
     title: "マシュマロ焼き",
     subtitle: "集会所テラスの炭火で♪",
@@ -267,14 +276,21 @@ export default function LandingPage() {
           <CountdownTimer targetDate={festivalDate} />
         </div>
 
-        {/* inzai-kun */}
-        <div className="mb-8 [@media(max-height:700px)]:mb-4">
+        {/* Characters */}
+        <div className="flex justify-center gap-4 mb-8 [@media(max-height:700px)]:mb-4">
           <Image
-            src="/img/inzai-kun_banzai.gif"
-            alt="いんざいくん"
+            src="/img/chara2.png"
+            alt=""
             width={100}
             height={100}
-            className="mx-auto drop-shadow-[0_0_20px_rgba(255,200,0,0.6)]"
+            className="drop-shadow-[0_0_20px_rgba(255,200,0,0.6)]"
+          />
+          <Image
+            src="/img/chara1.png"
+            alt=""
+            width={100}
+            height={100}
+            className="drop-shadow-[0_0_20px_rgba(255,200,0,0.6)]"
           />
         </div>
 
@@ -331,11 +347,11 @@ export default function LandingPage() {
         <div className="text-center mb-12">
           <p className="text-yellow-300 font-bold text-sm uppercase tracking-widest mb-2">出し物</p>
           <h2 className="text-3xl sm:text-4xl font-black">
-            お楽しみ<span className="text-yellow-300">４つ</span>の出し物！
+            お楽しみ<span className="text-yellow-300">５つ</span>の出し物！
           </h2>
         </div>
 
-        <div className="grid sm:grid-cols-2 gap-6">
+        <div className="grid sm:grid-cols-4 lg:grid-cols-6 gap-6 sm:[&>*]:col-span-2 sm:[&>*:nth-child(5)]:col-start-2 lg:[&>*:nth-child(4)]:col-start-2 lg:[&>*:nth-child(5)]:col-start-auto">
           {events.map((ev, i) => (
             <div
               key={i}
@@ -561,9 +577,6 @@ export default function LandingPage() {
 
       {/* ===== FOOTER ===== */}
       <footer className="text-center py-10 border-t border-white/10">
-        <div className="flex justify-center mb-4">
-          <Image src="/img/inzai-kun_festival.gif" alt="" width={48} height={48} />
-        </div>
         <p className="text-white/40 text-xs">© 2026 Eightes Town 自治会</p>
       </footer>
     </div>
