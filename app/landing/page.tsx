@@ -340,6 +340,7 @@ export default function LandingPage() {
             完璧じゃなくていい。<span className="text-yellow-300 font-bold">みんなで作る</span>から楽しい、それがコンセプトです。
           </p>
         </div>
+
       </section>
 
       {/* ===== EVENTS ===== */}
@@ -491,7 +492,6 @@ export default function LandingPage() {
           <BingoLink className="inline-flex items-center gap-3 px-10 py-5 rounded-full font-black text-lg bg-gradient-to-r from-purple-600 to-indigo-500 hover:from-purple-500 hover:to-indigo-400 shadow-[0_0_40px_rgba(130,80,255,0.5)] hover:shadow-[0_0_60px_rgba(130,80,255,0.7)] hover:scale-105 active:scale-95 transition-all duration-200">
             🎱 ビンゴに参加する！
           </BingoLink>
-          <p className="text-white/40 text-xs mt-4">参加には番地の入力が必要です</p>
         </div>
       </section>
 
@@ -503,6 +503,24 @@ export default function LandingPage() {
         </div>
 
         <div className="space-y-5">
+
+          {/* 参加対象について */}
+          <div className="rounded-2xl bg-white/5 border border-sky-500/30 overflow-hidden">
+            <div className="flex items-center gap-3 px-6 py-4 bg-sky-500/10 border-b border-sky-500/20">
+              <span className="text-2xl">🎟️</span>
+              <h3 className="font-black text-white">参加対象について</h3>
+            </div>
+            <ul className="px-6 py-5 space-y-3 text-white/65 text-sm leading-relaxed">
+              <li className="flex gap-2">
+                <span className="flex-shrink-0 text-yellow-400 font-bold">・</span>
+                将来的には近隣の自治会同士で交流できたらと思っています。その気持ちを込めて、今回は住民の知人・友人の方のご来場も大歓迎です。お気軽にお誘いください。
+              </li>
+              <li className="flex gap-2">
+                <span className="flex-shrink-0 text-yellow-400 font-bold">・</span>
+                <span>ただし景品の都合上、オンラインビンゴへの参加はエイテスタウン自治会員のみとなります。ご理解のほどお願いいたします。</span>
+              </li>
+            </ul>
+          </div>
 
           {/* 保護者向け */}
           <div className="rounded-2xl bg-white/5 border border-white/10 overflow-hidden">
