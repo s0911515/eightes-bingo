@@ -3,10 +3,10 @@
 import { useEffect, useState, useRef, useReducer } from "react";
 import { auth, db } from "@/lib/firebase";
 import { onAuthStateChanged } from "firebase/auth";
-import { 
-  collection, query, orderBy, limit, onSnapshot, 
-  addDoc, serverTimestamp, updateDoc, doc, deleteDoc, 
-  getDoc, Timestamp 
+import {
+  collection, query, orderBy, limit, onSnapshot,
+  addDoc, serverTimestamp, updateDoc, doc, deleteDoc,
+  Timestamp, runTransaction
 } from "firebase/firestore";
 import { useRouter } from "next/navigation";
 
@@ -103,20 +103,21 @@ export default function GamePage() {
       if (!user) return;
 
       const gameRef = doc(db, "gameStatus", "current");
-      const gameSnap = await getDoc(gameRef);
+      await runTransaction(db, async (transaction) => {
+        const gameSnap = await transaction.get(gameRef);
+        if (!gameSnap.exists()) return;
 
-      if (gameSnap.exists()) {
         const list = (gameSnap.data().participantList || []) as Participant[];
         const newList = list.filter((p) => p.uid !== user.uid);
         const stats = calculateGameStats(newList);
 
-        await updateDoc(gameRef, {
+        transaction.update(gameRef, {
           participantList: newList,
           totalParticipants: stats.totalParticipants,
           bingoCount: stats.bingoCount,
           receivedCount: stats.receivedCount,
         });
-      }
+      });
 
       await deleteDoc(doc(db, "participants", user.uid));
       await auth.signOut(); 
@@ -197,18 +198,20 @@ export default function GamePage() {
 
         // 2. 集約ドキュメント（gameStatus）の配列内ステータスを更新
         const gameRef = doc(db, "gameStatus", "current");
-        const gameSnap = await getDoc(gameRef);
-        if (gameSnap.exists()) {
+        await runTransaction(db, async (transaction) => {
+          const gameSnap = await transaction.get(gameRef);
+          if (!gameSnap.exists()) return;
+
           const list = gameSnap.data().participantList || [];
-          const newList = list.map((p: Participant) => 
+          const newList = list.map((p: Participant) =>
             p.uid === user.uid ? { ...p, isBingo: true, updatedAt: new Date() } : p
           );
           const stats = calculateGameStats(newList);
-          await updateDoc(gameRef, {
+          transaction.update(gameRef, {
             participantList: newList,
             bingoCount: stats.bingoCount
           });
-        }
+        });
       }
     };
     updateBingoStatus();
@@ -272,8 +275,10 @@ export default function GamePage() {
         setUserData(data);
 
         const gameRef = doc(db, "gameStatus", "current");
-        const gameSnap = await getDoc(gameRef);
-        if (gameSnap.exists()) {
+        await runTransaction(db, async (transaction) => {
+          const gameSnap = await transaction.get(gameRef);
+          if (!gameSnap.exists()) return;
+
           const list = (gameSnap.data().participantList || []) as Participant[];
           const dedupedList = dedupeParticipantList(list);
           const currentParticipant: Participant = {
@@ -312,14 +317,14 @@ export default function GamePage() {
 
           if (shouldUpdate) {
             const stats = calculateGameStats(normalizedList);
-            await updateDoc(gameRef, {
+            transaction.update(gameRef, {
               participantList: normalizedList,
               totalParticipants: stats.totalParticipants,
               bingoCount: stats.bingoCount,
               receivedCount: stats.receivedCount,
             });
           }
-        }
+        });
       });
 
       // クリーンアップ関数を返す
