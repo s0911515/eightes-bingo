@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useState, useRef } from "react";
+import Image from "next/image";
 import { auth, db } from "@/lib/firebase";
 import { signInAnonymously } from "firebase/auth";
 import {
@@ -168,28 +169,69 @@ export default function AdminPage() {
     setInputText("");
   };
 
+  const isWaiting = !isStarted && !isEnded;
+
   return (
-    <main className="relative min-h-screen flex bg-gradient-to-br from-slate-800 via-slate-900 to-black text-gray-100 font-sans overflow-hidden">
-      
-      <div className="fixed inset-0 pointer-events-none">
-        <div className="absolute top-[-10%] right-[-10%] w-96 h-96 bg-blue-900/20 rounded-full blur-3xl" />
-        <div className="absolute bottom-[-10%] left-[-10%] w-80 h-80 bg-emerald-900/20 rounded-full blur-3xl" />
+    <main className="relative min-h-screen flex bg-gradient-to-b from-[#0d0540] via-[#1a0a6e] to-[#0d0540] text-gray-100 font-sans overflow-hidden">
+
+      <div className="fixed inset-0 pointer-events-none overflow-hidden">
+        <div className="absolute top-[-10%] right-[-10%] w-96 h-96 bg-purple-700/20 rounded-full blur-3xl" />
+        <div className="absolute bottom-[-10%] left-[-10%] w-80 h-80 bg-yellow-500/10 rounded-full blur-3xl" />
+        <Image src="/img/fireworks.svg" alt="" width={140} height={140} className="absolute top-4 right-2 sm:right-10 opacity-70" />
+        <Image src="/img/fireworks.svg" alt="" width={110} height={110} className="absolute top-10 left-2 sm:left-10 opacity-50 scale-x-[-1]" />
+        <Image src="/img/lantern.svg" alt="" width={44} height={66} className="absolute top-0 left-[10%] opacity-80 hidden sm:block" />
+        <Image src="/img/lantern.svg" alt="" width={44} height={66} className="absolute top-0 right-[10%] opacity-80 hidden sm:block" />
       </div>
 
       <div className={`flex-1 flex flex-col items-center p-4 sm:p-8 z-10 transition-all duration-300 lg:mr-96 overflow-y-auto`}>
-        
-        <div className="w-full max-w-2xl flex justify-between items-end mb-8">
-          <h1 className="text-2xl sm:text-3xl font-black text-white tracking-tighter border-b-4 border-emerald-500 pb-2">
-            BINGO ADMIN
-          </h1>
-          <a 
-            href="/admin/participants" 
-            className="text-xs bg-white/10 hover:bg-white/20 text-emerald-400 px-4 py-2 rounded-full border border-emerald-500/30 transition-all mb-1"
+
+        <div className="w-full max-w-2xl flex justify-between items-end mb-6">
+          <div>
+            <div className="inline-flex items-center gap-1.5 bg-yellow-400 text-yellow-900 font-black text-[11px] px-3 py-1 rounded-full mb-2 shadow-lg shadow-yellow-400/30">
+              🏮 会場ステータス
+            </div>
+            <h1 className="text-xl sm:text-2xl font-black text-white leading-tight tracking-tight">
+              エイテスタウン自治会 夏祭りビンゴ大会
+            </h1>
+          </div>
+          <a
+            href="/admin/participants"
+            className="text-xs bg-white/10 hover:bg-white/20 text-yellow-300 px-4 py-2 rounded-full border border-yellow-400/30 transition-all mb-1 whitespace-nowrap"
           >
-            参加者名簿を表示 ⮕
+            参加者名簿 ⮕
           </a>
         </div>
-        
+
+        <div className={`w-full max-w-2xl mb-6 rounded-3xl border-2 px-6 py-5 text-center shadow-xl transition-all duration-500
+          ${isEnded ? "bg-slate-700/80 border-slate-400/60 text-slate-100"
+            : isStarted ? "bg-emerald-500/90 border-emerald-200 text-white animate-pulse"
+            : "bg-yellow-400/95 border-yellow-100 text-yellow-900"}`}>
+          <p className="text-[10px] font-black uppercase tracking-[0.3em] mb-1 opacity-70">
+            {isEnded ? "Game Ended" : isStarted ? "Now Drawing" : "Coming Soon"}
+          </p>
+          <p className="text-2xl sm:text-3xl font-black">
+            {isEnded ? "🎊 ビンゴ大会は終了しました 🎊" : isStarted ? "🎉 ただいま抽選中！ 🎉" : "🏮 まもなく開催！ 🏮"}
+          </p>
+          {isWaiting && (
+            <p className="mt-2 text-sm font-bold">運営が「ゲーム開始」を押すとスタートします</p>
+          )}
+        </div>
+
+        <div className="w-full max-w-2xl grid grid-cols-3 gap-3 mb-6">
+          <div className="bg-white/10 backdrop-blur-md rounded-2xl border border-white/10 px-4 py-4 text-center">
+            <p className="text-[9px] sm:text-[10px] font-bold text-white/60 uppercase tracking-wider mb-1">参加人数</p>
+            <p className="text-2xl sm:text-3xl font-black text-white">{totalParticipants}<span className="text-xs ml-0.5 font-bold text-white/60">名</span></p>
+          </div>
+          <div className="bg-red-500/20 backdrop-blur-md rounded-2xl border border-red-400/30 px-4 py-4 text-center">
+            <p className="text-[9px] sm:text-[10px] font-bold text-red-200 uppercase tracking-wider mb-1">ビンゴ達成</p>
+            <p className="text-2xl sm:text-3xl font-black text-white">{winners.length}<span className="text-xs ml-0.5 font-bold text-red-200">名</span></p>
+          </div>
+          <div className="bg-yellow-400/20 backdrop-blur-md rounded-2xl border border-yellow-300/30 px-4 py-4 text-center">
+            <p className="text-[9px] sm:text-[10px] font-bold text-yellow-200 uppercase tracking-wider mb-1">景品受取</p>
+            <p className="text-2xl sm:text-3xl font-black text-white">{claimedCount}<span className="text-xs ml-0.5 font-bold text-yellow-200">名</span></p>
+          </div>
+        </div>
+
         <div className="flex flex-wrap gap-4 mb-8">
           <button 
             onClick={handleGameStart} 
@@ -225,18 +267,18 @@ export default function AdminPage() {
           </button>
         </div>
 
-        <div className="w-full max-w-2xl bg-white/10 backdrop-blur-xl p-8 rounded-3xl shadow-2xl text-center border border-white/10">
-          <div className="text-xs font-bold text-emerald-400 uppercase tracking-[0.3em] mb-2">Selected Number</div>
-          <div className="text-[10rem] sm:text-[12rem] leading-none font-black text-white my-4 drop-shadow-[0_0_30px_rgba(255,255,255,0.3)]">
+        <div className="w-full max-w-2xl bg-white/10 backdrop-blur-xl p-8 rounded-3xl shadow-2xl text-center border border-yellow-300/20">
+          <div className="text-xs font-bold text-yellow-300 uppercase tracking-[0.3em] mb-2">Selected Number</div>
+          <div className="text-[10rem] sm:text-[12rem] leading-none font-black text-white my-4 drop-shadow-[0_0_40px_rgba(255,215,0,0.45)]">
             {drawnNumbers.length > 0 ? drawnNumbers[drawnNumbers.length - 1] : "--"}
           </div>
 
           <div className="border-t border-white/10 pt-6">
-            <h2 className="text-sm font-bold mb-4 text-gray-400 uppercase tracking-widest">History ({drawnNumbers.length}/75)</h2>
+            <h2 className="text-sm font-bold mb-4 text-gray-300 uppercase tracking-widest">History ({drawnNumbers.length}/75)</h2>
             <div className="grid grid-cols-10 gap-1.5">
               {Array.from({ length: 75 }, (_, i) => i + 1).map(n => (
                 <div key={n} className={`text-[10px] py-2 rounded-lg font-black border transition-all
-                  ${drawnNumbers.includes(n) ? "bg-emerald-500 text-white border-emerald-300 shadow-[0_0_10px_rgba(16,185,129,0.5)]" : "bg-black/20 text-gray-600 border-white/5"}`}>
+                  ${drawnNumbers.includes(n) ? "bg-red-600 text-white border-red-300 shadow-[0_0_10px_rgba(220,38,38,0.5)]" : "bg-black/20 text-gray-500 border-white/5"}`}>
                   {n}
                 </div>
               ))}
